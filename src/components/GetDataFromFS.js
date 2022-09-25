@@ -10,7 +10,7 @@ const useGetData = path => {
         (async () => {
             const getCollection = await collection(db, path);
             onSnapshot(getCollection, snap => {
-                if(_.isEmpty(snap.docs)) {
+                if(!_.isEmpty(snap.docs)) {
                     let data = [];
                     snap.forEach((doc, idx) => {
                         data.push({ ...doc.data(), uid: doc.id });

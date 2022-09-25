@@ -5,9 +5,9 @@ const SignContext = createContext();
 export const SignContextProvider = props => {
     const { children } = props;
     const [signBool, setSignBool] = useState(false);
-    const [userImformation, setUserImformation] = useState({})
+    const [userInformation, setUserInformation] = useState({})
     return(
-        <SignContext.Provider value={{ signBool, setSignBool, userImformation, setUserImformation }}>
+        <SignContext.Provider value={{ signBool, setSignBool, userInformation, setUserInformation }}>
             {children}
         </SignContext.Provider>
     )

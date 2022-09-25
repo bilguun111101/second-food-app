@@ -3,11 +3,14 @@ import { useTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { IconButton, Divider, Typography, List, Toolbar, CssBaseline, Drawer, Box } from "@mui/material"
+import { IconButton, Divider, Typography, List, Toolbar, CssBaseline, Drawer, Box, FormControlLabel, ListItem } from "@mui/material"
 import { AppBar, DrawerHeader, navbarElements, signBtns, styles } from './NavbarStyle';
 import NavbarBtn from './NavbarBtns/NavbarBtn';
 import { useSignContext } from '../../SignContext';
 import { useTitleContext } from '../../TitleContext';
+import { useSettingsContext } from '../../Settings';
+
+import { MaterialUISwitch } from "./NavbarStyle"
 
 const drawerWidth = 240;
 
@@ -16,6 +19,7 @@ export default function PersistentDrawerLeft() {
   const [open, setOpen] = React.useState(false);
   const { signBool } = useSignContext();
   const { title } = useTitleContext();
+  const { setColorChange } = useSettingsContext();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -29,18 +33,30 @@ export default function PersistentDrawerLeft() {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }), ...styles.bar }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            {title}
-          </Typography>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box display="flex" alignItems="center">
+            <IconButton
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start" 
+              sx={{ mr: 2, ...(open && { display: 'none' }), color: theme.palette.primary.text }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              {title}
+            </Typography>
+          </Box>
+
+          <List>
+            <ListItem disablePadding>
+              <FormControlLabel
+                control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked />}
+                onClick={() => setColorChange(old => !old)}
+              />
+            </ListItem>
+          </List>
+
         </Toolbar>
       </AppBar>
       <Drawer
