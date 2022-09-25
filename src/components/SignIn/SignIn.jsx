@@ -1,10 +1,10 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
-import { CheckAuthenticate } from '../Auth';
 import useGetData from "../GetDataFromFS";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -13,8 +13,12 @@ import { Copyright } from './Copyright';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { auth } from '../../firebase';
 import _ from "lodash";
+
+// some contextes import ^^^^^^^^^^
+import { useTitleContext } from '../../TitleContext';
+import { useSignContext } from '../../SignContext';
 
 
 const styles = {
@@ -28,8 +32,9 @@ const styles = {
 
 const SignInSide = () => {
 
-  const userData = useGetData(`users`);
-  const [isAccessBool, setIsAccessBool] = useState(false);
+  const userData = useGetData("users");
+  const { setTitle } = useTitleContext();
+  const { setSignBool, setUserInformation } = useSignContext();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -52,13 +57,22 @@ const SignInSide = () => {
         })
         return;
     }
-    CheckAuthenticate(data.get("email"), data.get("password"), setIsAccessBool)
-    console.log(isAccessBool);
+
+    signInWithEmailAndPassword(auth, data.get("email"), data.get("password")).then((userCredential) => {
+        const user = userCredential.user;
+        const userInformation = _.filter(userData, { email: data.get("email") });
+        setUserInformation(...userInformation);
+        setTitle("Мэню");
+        setSignBool(true);
+    }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setSignBool(false);
+    })
   };
 
-
   return (
-    <Grid container component="main" sx={{ height: '100vh', ...styles.backgroundColor }}>
+    <Grid container component="main" sx={{ height: '100vh', }}>
         <CssBaseline />
         <Grid
             item
@@ -74,7 +88,7 @@ const SignInSide = () => {
             backgroundPosition: 'center',
             }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{ ...styles.backgroundColor }}>
             <Box
             sx={{
                 my: 8,
@@ -90,7 +104,7 @@ const SignInSide = () => {
             <Typography component="h1" variant="h5" sx={styles.signUpBtn}>
                 Sign in
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, }}>
                 <TextField
                 margin="normal"
                 required

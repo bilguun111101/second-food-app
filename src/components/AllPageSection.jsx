@@ -2,7 +2,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import PersistentDrawerLeft from "./Navbar/Navbar";
 import { lightTheme, darkTheme } from "../themes";
-import { useSignContext } from "../SignContext";
+import { useSettingsContext } from "../Settings";
 import SignInSide from "./SignIn/SignIn";
 import { Button } from "@mui/material";
 import SignUp from "./SignUp/Signup";
@@ -27,10 +27,10 @@ const secTheme = createTheme({
 })
 
 const AllPageSection = () => {
-  const { signBool } = useSignContext();
+  const { colorChange } = useSettingsContext();
 
   return (
-    <ThemeProvider theme={!signBool ? theme : secTheme}>
+    <ThemeProvider theme={colorChange ? theme : secTheme}>
       <BrowserRouter>
           <Button variant="text" color="primary">click</Button>
           <PersistentDrawerLeft />
